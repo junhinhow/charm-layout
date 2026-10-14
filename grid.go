@@ -63,15 +63,43 @@ func (g *Grid) Render() string {
 		return ""
 	}
 
-	totalHGap := g.Gap * (g.Columns - 1)
-	colWidth := (g.width - totalHGap) / g.Columns
+	// Columns e um campo publico: pode ser alterado depois da criacao.
+	// Valida aqui para evitar divisao por zero e parametros invalidos.
+	columns := g.Columns
+	if columns < 1 {
+		columns = 1
+	}
+
+	gap := g.Gap
+	if gap < 0 {
+		gap = 0
+	}
+
+	width := g.width
+	if width < 0 {
+		width = 0
+	}
+
+	height := g.height
+	if height < 0 {
+		height = 0
+	}
+
+	totalHGap := gap * (columns - 1)
+	colWidth := (width - totalHGap) / columns
+	if colWidth < 0 {
+		colWidth = 0
+	}
 
 	// Calcula numero de linhas
-	rowCount := (len(g.Children) + g.Columns - 1) / g.Columns
-	totalVGap := g.Gap * (rowCount - 1)
+	rowCount := (len(g.Children) + columns - 1) / columns
+	totalVGap := gap * (rowCount - 1)
 	rowHeight := 0
 	if rowCount > 0 {
-		rowHeight = (g.height - totalVGap) / rowCount
+		rowHeight = (height - totalVGap) / rowCount
+	}
+	if rowHeight < 0 {
+		rowHeight = 0
 	}
 
 	cellStyle := lipgloss.NewStyle().
@@ -80,32 +108,32 @@ func (g *Grid) Render() string {
 
 	rows := make([]string, 0, rowCount)
 
-	for i := 0; i < len(g.Children); i += g.Columns {
-		end := i + g.Columns
+	for i := 0; i < len(g.Children); i += columns {
+		end := i + columns
 		if end > len(g.Children) {
 			end = len(g.Children)
 		}
 
-		cells := make([]string, 0, g.Columns)
+		cells := make([]string, 0, columns)
 		for j := i; j < end; j++ {
 			cells = append(cells, cellStyle.Render(g.Children[j]))
 		}
 
 		// Preenche celulas vazias na ultima linha para manter alinhamento
-		for len(cells) < g.Columns {
+		for len(cells) < columns {
 			cells = append(cells, cellStyle.Render(""))
 		}
 
-		if g.Gap > 0 {
-			row := joinWithSpacer(cells, spacerH(g.Gap), lipgloss.Top)
+		if gap > 0 {
+			row := joinWithSpacer(cells, spacerH(gap), lipgloss.Top)
 			rows = append(rows, row)
 		} else {
 			rows = append(rows, lipgloss.JoinHorizontal(lipgloss.Top, cells...))
 		}
 	}
 
-	if g.Gap > 0 {
-		return joinVerticalWithSpacer(rows, spacerV(g.Gap))
+	if gap > 0 {
+		return joinVerticalWithSpacer(rows, spacerV(gap))
 	}
 	return lipgloss.JoinVertical(lipgloss.Left, rows...)
 }
