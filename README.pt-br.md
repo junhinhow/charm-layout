@@ -1,4 +1,4 @@
-# charm-layout
+﻿# charm-layout
 
 > [Read in English](README.md)
 
@@ -118,7 +118,7 @@ Use-o quando o layout for montado a partir de entrada do usuário.
 flex := layout.NewFlex(layout.Row).SetSize(80, 24).AddChild(-0.5, "A")
 
 if _, err := flex.RenderE(); err != nil {
-    // err satisfaz errors.Is(err, layout.ErrRatioInvalido)
+    // err satisfaz errors.Is(err, layout.ErrInvalidRatio)
 }
 
 err := flex.Validate() // mesma verificação, sem renderizar
@@ -129,12 +129,12 @@ Os seguintes erros sentinel são devolvidos (sempre com contexto, de modo que
 
 | Erro | Significado |
 |------|-------------|
-| `ErrDirecaoInvalida` | Direção de flex desconhecida |
-| `ErrGapInvalido` | Espaçamento negativo |
-| `ErrTamanhoInvalido` | Largura ou altura negativa |
-| `ErrRatioInvalido` | Razão negativa, `NaN` ou infinita |
-| `ErrRazaoSomaZero` | Todas as razões somam zero |
-| `ErrColunasInvalidas` | Grade com menos de uma coluna |
+| `ErrInvalidDirection` | Direção de flex desconhecida |
+| `ErrInvalidGap` | Espaçamento negativo |
+| `ErrInvalidSize` | Largura ou altura negativa |
+| `ErrInvalidRatio` | Razão negativa, `NaN` ou infinita |
+| `ErrZeroRatioSum` | Todas as razões somam zero |
+| `ErrInvalidColumns` | Grade com menos de uma coluna |
 
 ## Referência da API
 
@@ -182,7 +182,7 @@ const (
 )
 
 func (d Direction) String() string  // "Row", "Column" ou "Direction(n)"
-func (d Direction) Valida() bool    // true para Row e Column
+func (d Direction) Valid() bool    // true para Row e Column
 
 type FlexChild struct {
     Ratio   float64  // peso de flex-grow — as razões não precisam somar 1

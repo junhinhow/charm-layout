@@ -53,7 +53,7 @@ func (d Direction) String() string {
 }
 
 // Valida informa se a direção é conhecida pelo motor de layout.
-func (d Direction) Valida() bool {
+func (d Direction) Valid() bool {
 	return d == Row || d == Column
 }
 
@@ -105,8 +105,8 @@ func NewFlex(dir Direction) *Flex {
 		width:     80,
 		height:    24,
 	}
-	if !dir.Valida() {
-		f.registrarErro(fmt.Errorf("%w: %d", ErrDirecaoInvalida, int(dir)))
+	if !dir.Valid() {
+		f.registrarErro(fmt.Errorf("%w: %d", ErrInvalidDirection, int(dir)))
 	}
 	return f
 }
@@ -128,10 +128,10 @@ func NewFlexE(dir Direction) (*Flex, error) {
 // informado é mantido e saneado na renderização.
 func (f *Flex) SetSize(width, height int) *Flex {
 	if width < 0 {
-		f.registrarErro(fmt.Errorf("%w: largura %d", ErrTamanhoInvalido, width))
+		f.registrarErro(fmt.Errorf("%w: largura %d", ErrInvalidSize, width))
 	}
 	if height < 0 {
-		f.registrarErro(fmt.Errorf("%w: altura %d", ErrTamanhoInvalido, height))
+		f.registrarErro(fmt.Errorf("%w: altura %d", ErrInvalidSize, height))
 	}
 	f.width = width
 	f.height = height
@@ -144,7 +144,7 @@ func (f *Flex) SetSize(width, height int) *Flex {
 // informado é mantido e saneado na renderização.
 func (f *Flex) SetGap(gap int) *Flex {
 	if gap < 0 {
-		f.registrarErro(fmt.Errorf("%w: %d", ErrGapInvalido, gap))
+		f.registrarErro(fmt.Errorf("%w: %d", ErrInvalidGap, gap))
 	}
 	f.Gap = gap
 	return f
@@ -156,7 +156,7 @@ func (f *Flex) SetGap(gap int) *Flex {
 // configuração.
 func (f *Flex) AddChild(ratio float64, content string) *Flex {
 	if !ratioValido(ratio) {
-		f.registrarErro(fmt.Errorf("%w: %v no filho %d", ErrRatioInvalido, ratio, len(f.Children)))
+		f.registrarErro(fmt.Errorf("%w: %v no filho %d", ErrInvalidRatio, ratio, len(f.Children)))
 	}
 	f.Children = append(f.Children, FlexChild{
 		Ratio:   ratio,
@@ -192,28 +192,28 @@ func (f *Flex) Validate() error {
 	if f.err != nil {
 		return f.err
 	}
-	if !f.Direction.Valida() {
-		return fmt.Errorf("%w: %d", ErrDirecaoInvalida, int(f.Direction))
+	if !f.Direction.Valid() {
+		return fmt.Errorf("%w: %d", ErrInvalidDirection, int(f.Direction))
 	}
 	if f.Gap < 0 {
-		return fmt.Errorf("%w: %d", ErrGapInvalido, f.Gap)
+		return fmt.Errorf("%w: %d", ErrInvalidGap, f.Gap)
 	}
 	if f.width < 0 {
-		return fmt.Errorf("%w: largura %d", ErrTamanhoInvalido, f.width)
+		return fmt.Errorf("%w: largura %d", ErrInvalidSize, f.width)
 	}
 	if f.height < 0 {
-		return fmt.Errorf("%w: altura %d", ErrTamanhoInvalido, f.height)
+		return fmt.Errorf("%w: altura %d", ErrInvalidSize, f.height)
 	}
 
 	soma := 0.0
 	for i, child := range f.Children {
 		if !ratioValido(child.Ratio) {
-			return fmt.Errorf("%w: %v no filho %d", ErrRatioInvalido, child.Ratio, i)
+			return fmt.Errorf("%w: %v no filho %d", ErrInvalidRatio, child.Ratio, i)
 		}
 		soma += child.Ratio
 	}
 	if len(f.Children) > 0 && soma <= 0 {
-		return ErrRazaoSomaZero
+		return ErrZeroRatioSum
 	}
 
 	return nil
@@ -254,7 +254,7 @@ func (f *Flex) renderizar() (string, error) {
 	}
 
 	direcao := f.Direction
-	if !direcao.Valida() {
+	if !direcao.Valid() {
 		// Fallback determinístico: direções desconhecidas são tratadas como
 		// coluna, igual ao comportamento histórico do pacote.
 		direcao = Column

@@ -20,8 +20,8 @@ func TestGridColunasZeroNaoEntraEmPanic(t *testing.T) {
 		t.Error("Render deveria devolver uma saída não vazia")
 	}
 
-	if _, err := grade.RenderE(); !errors.Is(err, ErrColunasInvalidas) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrColunasInvalidas", err)
+	if _, err := grade.RenderE(); !errors.Is(err, ErrInvalidColumns) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidColumns", err)
 	}
 }
 
@@ -33,8 +33,8 @@ func TestGridColunasNegativasNaoEntraEmPanic(t *testing.T) {
 	if saida := grade.Render(); saida == "" {
 		t.Error("Render deveria devolver uma saída não vazia")
 	}
-	if _, err := grade.RenderE(); !errors.Is(err, ErrColunasInvalidas) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrColunasInvalidas", err)
+	if _, err := grade.RenderE(); !errors.Is(err, ErrInvalidColumns) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidColumns", err)
 	}
 }
 
@@ -132,21 +132,21 @@ func TestGridConteudoLongoNaoEstoura(t *testing.T) {
 
 func TestGridSetSizeNegativo(t *testing.T) {
 	grade := NewGrid(2).SetSize(-1, 5).AddChild("A")
-	if _, err := grade.RenderE(); !errors.Is(err, ErrTamanhoInvalido) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrTamanhoInvalido", err)
+	if _, err := grade.RenderE(); !errors.Is(err, ErrInvalidSize) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidSize", err)
 	}
 }
 
 func TestGridSetGapNegativo(t *testing.T) {
 	grade := NewGrid(2).SetGap(-2).AddChild("A")
-	if _, err := grade.RenderE(); !errors.Is(err, ErrGapInvalido) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrGapInvalido", err)
+	if _, err := grade.RenderE(); !errors.Is(err, ErrInvalidGap) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidGap", err)
 	}
 }
 
 func TestGridNewGridColunasInvalidas(t *testing.T) {
-	if _, err := NewGridE(0); !errors.Is(err, ErrColunasInvalidas) {
-		t.Fatalf("NewGridE(0) devolveu %v, esperado ErrColunasInvalidas", err)
+	if _, err := NewGridE(0); !errors.Is(err, ErrInvalidColumns) {
+		t.Fatalf("NewGridE(0) devolveu %v, esperado ErrInvalidColumns", err)
 	}
 	if _, err := NewGridE(3); err != nil {
 		t.Fatalf("NewGridE(3) devolveu %v, esperado nil", err)

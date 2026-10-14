@@ -42,7 +42,7 @@ func NewGrid(columns int) *Grid {
 		height:  24,
 	}
 	if columns < 1 {
-		g.registrarErro(fmt.Errorf("%w: %d", ErrColunasInvalidas, columns))
+		g.registrarErro(fmt.Errorf("%w: %d", ErrInvalidColumns, columns))
 		g.Columns = 1
 	}
 	return g
@@ -64,10 +64,10 @@ func NewGridE(columns int) (*Grid, error) {
 // informado é mantido e saneado na renderização.
 func (g *Grid) SetSize(width, height int) *Grid {
 	if width < 0 {
-		g.registrarErro(fmt.Errorf("%w: largura %d", ErrTamanhoInvalido, width))
+		g.registrarErro(fmt.Errorf("%w: largura %d", ErrInvalidSize, width))
 	}
 	if height < 0 {
-		g.registrarErro(fmt.Errorf("%w: altura %d", ErrTamanhoInvalido, height))
+		g.registrarErro(fmt.Errorf("%w: altura %d", ErrInvalidSize, height))
 	}
 	g.width = width
 	g.height = height
@@ -80,7 +80,7 @@ func (g *Grid) SetSize(width, height int) *Grid {
 // informado é mantido e saneado na renderização.
 func (g *Grid) SetGap(gap int) *Grid {
 	if gap < 0 {
-		g.registrarErro(fmt.Errorf("%w: %d", ErrGapInvalido, gap))
+		g.registrarErro(fmt.Errorf("%w: %d", ErrInvalidGap, gap))
 	}
 	g.Gap = gap
 	return g
@@ -126,16 +126,16 @@ func (g *Grid) Validate() error {
 		return g.err
 	}
 	if g.Columns < 1 {
-		return fmt.Errorf("%w: %d", ErrColunasInvalidas, g.Columns)
+		return fmt.Errorf("%w: %d", ErrInvalidColumns, g.Columns)
 	}
 	if g.Gap < 0 {
-		return fmt.Errorf("%w: %d", ErrGapInvalido, g.Gap)
+		return fmt.Errorf("%w: %d", ErrInvalidGap, g.Gap)
 	}
 	if g.width < 0 {
-		return fmt.Errorf("%w: largura %d", ErrTamanhoInvalido, g.width)
+		return fmt.Errorf("%w: largura %d", ErrInvalidSize, g.width)
 	}
 	if g.height < 0 {
-		return fmt.Errorf("%w: altura %d", ErrTamanhoInvalido, g.height)
+		return fmt.Errorf("%w: altura %d", ErrInvalidSize, g.height)
 	}
 	return nil
 }

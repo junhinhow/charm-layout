@@ -61,8 +61,8 @@ func TestFlexRazaoNaoPrecisaSomarUm(t *testing.T) {
 func TestFlexRazaoInvalida(t *testing.T) {
 	flex := NewFlex(Row).SetSize(20, 2).AddChild(-0.5, "A")
 
-	if _, err := flex.RenderE(); !errors.Is(err, ErrRatioInvalido) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrRatioInvalido", err)
+	if _, err := flex.RenderE(); !errors.Is(err, ErrInvalidRatio) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidRatio", err)
 	}
 
 	// A variante tolerante não entra em panic e devolve uma geometria válida.
@@ -75,11 +75,11 @@ func TestFlexRazaoInvalida(t *testing.T) {
 func TestFlexDirecaoInvalida(t *testing.T) {
 	flex := NewFlex(Direction(42)).SetSize(20, 2).AddChild(0.5, "A")
 
-	if _, err := flex.RenderE(); !errors.Is(err, ErrDirecaoInvalida) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrDirecaoInvalida", err)
+	if _, err := flex.RenderE(); !errors.Is(err, ErrInvalidDirection) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidDirection", err)
 	}
-	if err := flex.Validate(); !errors.Is(err, ErrDirecaoInvalida) {
-		t.Fatalf("Validate devolveu %v, esperado ErrDirecaoInvalida", err)
+	if err := flex.Validate(); !errors.Is(err, ErrInvalidDirection) {
+		t.Fatalf("Validate devolveu %v, esperado ErrInvalidDirection", err)
 	}
 
 	// A variante tolerante não entra em panic.
@@ -89,8 +89,8 @@ func TestFlexDirecaoInvalida(t *testing.T) {
 }
 
 func TestFlexNewFlexE(t *testing.T) {
-	if _, err := NewFlexE(Direction(7)); !errors.Is(err, ErrDirecaoInvalida) {
-		t.Fatalf("NewFlexE devolveu %v, esperado ErrDirecaoInvalida", err)
+	if _, err := NewFlexE(Direction(7)); !errors.Is(err, ErrInvalidDirection) {
+		t.Fatalf("NewFlexE devolveu %v, esperado ErrInvalidDirection", err)
 	}
 	if _, err := NewFlexE(Row); err != nil {
 		t.Fatalf("NewFlexE(Row) devolveu %v, esperado nil", err)
@@ -168,15 +168,15 @@ func TestFlexConteudoMultibyteNaoEstoura(t *testing.T) {
 
 func TestFlexSetSizeNegativo(t *testing.T) {
 	flex := NewFlex(Row).SetSize(-10, 5).AddChild(0.5, "A")
-	if _, err := flex.RenderE(); !errors.Is(err, ErrTamanhoInvalido) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrTamanhoInvalido", err)
+	if _, err := flex.RenderE(); !errors.Is(err, ErrInvalidSize) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidSize", err)
 	}
 }
 
 func TestFlexSetGapNegativo(t *testing.T) {
 	flex := NewFlex(Row).SetGap(-1).AddChild(0.5, "A")
-	if _, err := flex.RenderE(); !errors.Is(err, ErrGapInvalido) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrGapInvalido", err)
+	if _, err := flex.RenderE(); !errors.Is(err, ErrInvalidGap) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrInvalidGap", err)
 	}
 	if got := lipgloss.Width(flex.Render()); got != 80 {
 		t.Errorf("largura renderizada = %d, esperado 80", got)
@@ -185,8 +185,8 @@ func TestFlexSetGapNegativo(t *testing.T) {
 
 func TestFlexSomaRazaoZero(t *testing.T) {
 	flex := NewFlex(Row).SetSize(20, 2).AddChild(0, "A").AddChild(0, "B")
-	if _, err := flex.RenderE(); !errors.Is(err, ErrRazaoSomaZero) {
-		t.Fatalf("RenderE devolveu %v, esperado ErrRazaoSomaZero", err)
+	if _, err := flex.RenderE(); !errors.Is(err, ErrZeroRatioSum) {
+		t.Fatalf("RenderE devolveu %v, esperado ErrZeroRatioSum", err)
 	}
 	// A variante tolerante divide o espaço igualmente.
 	linha := primeiraLinha(flex.Render())

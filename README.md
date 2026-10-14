@@ -1,4 +1,4 @@
-# charm-layout
+﻿# charm-layout
 
 > [Leia em Português](README.pt-br.md)
 
@@ -118,7 +118,7 @@ nothing. Use it when the layout is built from user input.
 flex := layout.NewFlex(layout.Row).SetSize(80, 24).AddChild(-0.5, "A")
 
 if _, err := flex.RenderE(); err != nil {
-    // err matches errors.Is(err, layout.ErrRatioInvalido)
+    // err matches errors.Is(err, layout.ErrInvalidRatio)
 }
 
 err := flex.Validate() // same check, without rendering
@@ -129,12 +129,12 @@ The following sentinel errors are returned (always wrapped with context, so
 
 | Error | Meaning |
 |-------|---------|
-| `ErrDirecaoInvalida` | Unknown flex direction |
-| `ErrGapInvalido` | Negative gap |
-| `ErrTamanhoInvalido` | Negative width or height |
-| `ErrRatioInvalido` | Negative, `NaN` or infinite ratio |
-| `ErrRazaoSomaZero` | All ratios add up to zero |
-| `ErrColunasInvalidas` | Grid with less than one column |
+| `ErrInvalidDirection` | Unknown flex direction |
+| `ErrInvalidGap` | Negative gap |
+| `ErrInvalidSize` | Negative width or height |
+| `ErrInvalidRatio` | Negative, `NaN` or infinite ratio |
+| `ErrZeroRatioSum` | All ratios add up to zero |
+| `ErrInvalidColumns` | Grid with less than one column |
 
 ## API Reference
 
@@ -182,7 +182,7 @@ const (
 )
 
 func (d Direction) String() string  // "Row", "Column" or "Direction(n)"
-func (d Direction) Valida() bool    // true for Row and Column
+func (d Direction) Valid() bool    // true for Row and Column
 
 type FlexChild struct {
     Ratio   float64  // flex-grow weight — the ratios do not need to add up to 1
