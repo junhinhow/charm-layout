@@ -227,8 +227,7 @@ func (f *Flex) Validate() error {
 // geometria válida, mesmo com configuração inválida. Use [Flex.RenderE] para
 // detectar erros de configuração.
 func (f *Flex) Render() string {
-	saida, _ := f.renderizar()
-	return saida
+	return f.renderizar()
 }
 
 // RenderE calcula o layout e devolve erro quando a configuração do container
@@ -237,7 +236,7 @@ func (f *Flex) RenderE() (string, error) {
 	if err := f.Validate(); err != nil {
 		return "", err
 	}
-	return f.renderizar()
+	return f.renderizar(), nil
 }
 
 // registrarErro guarda o primeiro erro de configuração encontrado.
@@ -248,9 +247,9 @@ func (f *Flex) registrarErro(err error) {
 }
 
 // renderizar monta o layout usando valores saneados.
-func (f *Flex) renderizar() (string, error) {
+func (f *Flex) renderizar() string {
 	if len(f.Children) == 0 {
-		return "", nil
+		return ""
 	}
 
 	direcao := f.Direction
@@ -276,7 +275,7 @@ func (f *Flex) renderizar() (string, error) {
 }
 
 // renderizarLinha distribui os filhos horizontalmente.
-func (f *Flex) renderizarLinha(gap, largura, altura int, pesos []float64) (string, error) {
+func (f *Flex) renderizarLinha(gap, largura, altura int, pesos []float64) string {
 	n := len(f.Children)
 
 	// O espaçamento é reduzido quando não cabe na largura disponível.
@@ -292,13 +291,13 @@ func (f *Flex) renderizarLinha(gap, largura, altura int, pesos []float64) (strin
 	}
 
 	if gapEfetivo > 0 {
-		return joinWithSpacer(renderizados, strings.Repeat(" ", gapEfetivo), lipgloss.Top), nil
+		return joinWithSpacer(renderizados, strings.Repeat(" ", gapEfetivo), lipgloss.Top)
 	}
-	return lipgloss.JoinHorizontal(lipgloss.Top, renderizados...), nil
+	return lipgloss.JoinHorizontal(lipgloss.Top, renderizados...)
 }
 
 // renderizarColuna distribui os filhos verticalmente.
-func (f *Flex) renderizarColuna(gap, largura, altura int, pesos []float64) (string, error) {
+func (f *Flex) renderizarColuna(gap, largura, altura int, pesos []float64) string {
 	n := len(f.Children)
 
 	// O espaçamento é reduzido quando não cabe na altura disponível.
@@ -322,9 +321,9 @@ func (f *Flex) renderizarColuna(gap, largura, altura int, pesos []float64) (stri
 		// O separador precisa de gap-1 quebras de linha: o bloco separador já
 		// ocupa uma linha, o que faz o total de linhas em branco entre dois
 		// filhos ser exatamente igual ao gap.
-		return joinVerticalWithSpacer(renderizados, strings.Repeat("\n", gapEfetivo-1)), nil
+		return joinVerticalWithSpacer(renderizados, strings.Repeat("\n", gapEfetivo-1))
 	}
-	return lipgloss.JoinVertical(lipgloss.Left, renderizados...), nil
+	return lipgloss.JoinVertical(lipgloss.Left, renderizados...)
 }
 
 // joinWithSpacer une strings horizontalmente inserindo um espacador entre elas.

@@ -147,8 +147,7 @@ func (g *Grid) Validate() error {
 // geometria válida, mesmo com configuração inválida. Use [Grid.RenderE] para
 // detectar erros de configuração.
 func (g *Grid) Render() string {
-	saida, _ := g.renderizar()
-	return saida
+	return g.renderizar()
 }
 
 // RenderE calcula o layout e devolve erro quando a configuração da grade é
@@ -157,7 +156,7 @@ func (g *Grid) RenderE() (string, error) {
 	if err := g.Validate(); err != nil {
 		return "", err
 	}
-	return g.renderizar()
+	return g.renderizar(), nil
 }
 
 // registrarErro guarda o primeiro erro de configuração encontrado.
@@ -168,9 +167,9 @@ func (g *Grid) registrarErro(err error) {
 }
 
 // renderizar monta a grade usando valores saneados.
-func (g *Grid) renderizar() (string, error) {
+func (g *Grid) renderizar() string {
 	if len(g.Children) == 0 {
-		return "", nil
+		return ""
 	}
 
 	colunas := max(g.Columns, 1)
@@ -228,7 +227,7 @@ func (g *Grid) renderizar() (string, error) {
 		// O separador precisa de gap-1 quebras de linha: o bloco separador já
 		// ocupa uma linha, o que faz o total de linhas em branco entre duas
 		// linhas da grade ser exatamente igual ao gap.
-		return joinVerticalWithSpacer(linhas, strings.Repeat("\n", gapEfetivo-1)), nil
+		return joinVerticalWithSpacer(linhas, strings.Repeat("\n", gapEfetivo-1))
 	}
-	return lipgloss.JoinVertical(lipgloss.Left, linhas...), nil
+	return lipgloss.JoinVertical(lipgloss.Left, linhas...)
 }
